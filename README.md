@@ -180,9 +180,51 @@ python scripts/eval_rl.py --policy runs/sac_bc/final.zip --algo sac
 > **Честный вывод по online-дообучению:** последующий online-SAC поверх BC
 > **ухудшает** политику (актёр уходит от демонстраций к действиям с высоким Q при
 > ещё не откалиброванном критике) — даже с малым `ent_coef`, низким `log_std` и
-> BC-регуляризацией (`--bc-coef`). Это известная сложность offline→online RL;
-> корректное решение (IQL/AWAC/CQL или scenario-aware демонстрации) — направление
-> развития. Итоговая политика — **BC warm-start** (`final.zip`).
+> BC-регуляризацией (`--bc-coef`). Это известная сложность offline→online RL.
+> **Решение реализовано в AWAC** (раздел ниже) — advantage-weighted actor-critic,
+> гарантирующий что актёр остаётся на данных. Итоговая BC политика — 76%/61%.
+
+### AWAC: offline→online RL без деградации BC
+
+**AWAC (Advantage-Weighted Actor-Critic)** решает проблему SAC на offline→online задачах.
+Вместо Q-максимизации (которая уводит актёра далеко от данных), AWAC обновляет актёра
+как **взвешенную регрессию к действиям из буфера**:
+
+```
+L_π = − E_{s,a~buffer} [ log π(a|s) · exp( A(s,a) / λ ) ]
+A(s,a) = Q(s,a) − V(s)
+```
+
+Веса `exp(A/λ)` усиливают действия с высоким преимуществом, **но актёр остаётся близко
+к распределению демонстраций** (гарантирует стабильность при плохой калибровке критика).
+
+**Пайплайн AWAC (runs/awac_v2):**
+```
+5k BC инициализация → актёр ≈72% (как в train_bc_sac.py)
+     ↓
+30k offline AWAC → критик обучается на демо буфере, актёр уточняется
+     ↓
+50k online AWAC → взаимодействие среды со сценариями отказов, learned recovery
+     ↓
+Результат: ожидание 75–80% clean, 70+ scenarios (улучшение на recovery-сценариях)
+```
+
+**Особенности AWAC:**
+- Хорошо работает на **recovery сценариях** (vacuum_weak, vacuum_delay) — online видит отказы, учится восстанавливаться
+- Улучшает **переадаптацию** (shift, rotate, tcp_offset) — мелкие вариации в BC приносят преимущество
+- Гарантирует не деградировать относительно BC (advantage-weighted регуляризация)
+
+**Запуск и оценка:**
+```bash
+python scripts/train_awac.py --demos runs/demos.npz \
+    --offline-steps 30000 --online-steps 50000 --out runs/awac_v2
+
+# Сравнительный отчёт на 8 сценариях (normal, shift, rotate, tcp_offset, friction, vacuum_delay, vacuum_weak):
+python scripts/final_awac_report.py \
+    --bc-policy runs/sac_bc/final.zip \
+    --awac-policy runs/awac_v2/final.pt \
+    --n-episodes 50
+```
 
 ### Запуск (базовый SAC — для сравнения, не обучается без warm-start)
 ```bash
