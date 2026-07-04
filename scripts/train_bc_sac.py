@@ -34,6 +34,8 @@ def main():
                     help="малый фикс. коэф. энтропии для мягкого дообучения")
     ap.add_argument("--init-log-std", type=float, default=-2.0,
                     help="начальный log_std актёра после BC (низкий = мало шума)")
+    ap.add_argument("--bc-coef", type=float, default=0.5,
+                    help="сила BC-регуляризации во время SAC (0 = выкл)")
     ap.add_argument("--outdir", default="runs/sac_bc")
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args()
@@ -47,9 +49,36 @@ def main():
         from stable_baselines3 import SAC
         from stable_baselines3.common.vec_env import SubprocVecEnv, DummyVecEnv
         from stable_baselines3.common.monitor import Monitor
-        from stable_baselines3.common.callbacks import CheckpointCallback
+        from stable_baselines3.common.callbacks import CheckpointCallback, BaseCallback
     except ImportError:
         sys.exit("Установите: pip install stable-baselines3")
+
+    class BCAnchor(BaseCallback):
+        """BC-регуляризация актёра во время SAC (TD3+BC-стиль): не даёт политике
+        уйти от демонстраций, иначе online-SAC разрушает точную BC-политику."""
+
+        def __init__(self, obs, act, coef, wvec, bs=256, every=2):
+            super().__init__()
+            self.obs, self.act = obs, act
+            self.coef, self.bs, self.every = coef, bs, every
+            self.wvec = wvec
+
+        def _on_training_start(self):
+            self.ot = torch.as_tensor(self.obs, device=self.model.device)
+            self.at = torch.as_tensor(self.act, device=self.model.device)
+
+        def _on_step(self):
+            if self.coef <= 0 or self.n_calls % self.every != 0:
+                return True
+            if self.model.num_timesteps < self.model.learning_starts:
+                return True
+            idx = torch.randint(0, len(self.ot), (self.bs,), device=self.model.device)
+            pred = self.model.actor(self.ot[idx], deterministic=True)
+            loss = self.coef * torch.mean(self.wvec * (pred - self.at[idx]) ** 2)
+            self.model.actor.optimizer.zero_grad()
+            loss.backward()
+            self.model.actor.optimizer.step()
+            return True
 
     from robozone.rl_env import SortingPickEnv
 
@@ -95,9 +124,16 @@ def main():
             print(f"BC эпоха {ep:3d}: weighted-MSE {tot / n:.4f}")
 
     # понижаем log_std актёра: BC обучил только среднее, а стохастичность SAC
-    # (std~1) разрушает точное управление -> задаём малый разброс
+    # (std~1) разрушает точное управление -> задаём малый постоянный разброс.
+    # В SB3 log_std — это nn.Linear (зависит от состояния): обнуляем веса и
+    # выставляем смещение, чтобы log_std ≈ init_log_std для всех состояний.
     with torch.no_grad():
-        model.actor.log_std.data.fill_(args.init_log_std)
+        ls = model.actor.log_std
+        if isinstance(ls, torch.nn.Linear):
+            ls.weight.data.zero_()
+            ls.bias.data.fill_(args.init_log_std)
+        else:
+            ls.data.fill_(args.init_log_std)
     model.save(str(outdir / "bc_only"))
 
     # -------------------- 2) seed replay buffer --------------------
@@ -110,7 +146,8 @@ def main():
     # -------------------- 3) SAC fine-tune --------------------
     ckpt = CheckpointCallback(save_freq=max(20000 // args.n_envs, 1),
                               save_path=str(outdir), name_prefix="model")
-    model.learn(total_timesteps=args.timesteps, callback=ckpt,
+    anchor = BCAnchor(obs, act, coef=args.bc_coef, wvec=w)
+    model.learn(total_timesteps=args.timesteps, callback=[ckpt, anchor],
                 reset_num_timesteps=False)
     model.save(str(outdir / "final"))
     print(f"модель сохранена: {outdir / 'final'}.zip")
