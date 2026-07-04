@@ -1,0 +1,13 @@
+# Ядро симуляции и части определения/классификации (Python 3.11)
+mujoco>=3.1
+numpy>=1.24
+gymnasium>=0.29
+trimesh>=4.0
+cascadio>=0.0.14        # загрузка STEP в trimesh
+shapely>=2.0            # сечения для критерия «круг в сечении»
+scipy>=1.10
+networkx>=3.0
+rtree>=1.0
+pillow>=10.0
+imageio>=2.31
+imageio-ffmpeg>=0.4     # запись демо-видео (mp4)

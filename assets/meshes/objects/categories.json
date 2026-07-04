@@ -1,0 +1,134 @@
+{
+  "bag": {
+    "name": "bag",
+    "category": "round",
+    "zone": "D",
+    "obb_extents_m": [
+      0.2017,
+      0.1753,
+      0.1703
+    ],
+    "k_round": 0.896,
+    "label_ru": "Не подходит для сортировки без доупаковки"
+  },
+  "bottle": {
+    "name": "bottle",
+    "category": "round",
+    "zone": "D",
+    "obb_extents_m": [
+      0.3048,
+      0.091,
+      0.091
+    ],
+    "k_round": 0.995,
+    "label_ru": "Не подходит для сортировки без доупаковки"
+  },
+  "box_300x200x200": {
+    "name": "box_300x200x200",
+    "category": "sortable",
+    "zone": "B",
+    "obb_extents_m": [
+      0.301,
+      0.2005,
+      0.2
+    ],
+    "k_round": 0.72,
+    "label_ru": "Подходит для сортировки"
+  },
+  "box_400x400x300": {
+    "name": "box_400x400x300",
+    "category": "oversize",
+    "zone": "C",
+    "obb_extents_m": [
+      0.401,
+      0.4,
+      0.3005
+    ],
+    "k_round": 0.716,
+    "label_ru": "Не подходит для сортировки по габаритам"
+  },
+  "cylinder": {
+    "name": "cylinder",
+    "category": "round",
+    "zone": "D",
+    "obb_extents_m": [
+      0.4349,
+      0.05,
+      0.043
+    ],
+    "k_round": 0.867,
+    "label_ru": "Не подходит для сортировки без доупаковки"
+  },
+  "detergent": {
+    "name": "detergent",
+    "category": "sortable",
+    "zone": "B",
+    "obb_extents_m": [
+      0.2782,
+      0.2599,
+      0.1798
+    ],
+    "k_round": 0.742,
+    "label_ru": "Подходит для сортировки"
+  },
+  "helmet": {
+    "name": "helmet",
+    "category": "round",
+    "zone": "D",
+    "obb_extents_m": [
+      0.3535,
+      0.2971,
+      0.2799
+    ],
+    "k_round": 0.895,
+    "label_ru": "Не подходит для сортировки без доупаковки"
+  },
+  "lunchbox": {
+    "name": "lunchbox",
+    "category": "sortable",
+    "zone": "B",
+    "obb_extents_m": [
+      0.2011,
+      0.1524,
+      0.0623
+    ],
+    "k_round": 0.646,
+    "label_ru": "Подходит для сортировки"
+  },
+  "pen": {
+    "name": "pen",
+    "category": "oversize",
+    "zone": "C",
+    "obb_extents_m": [
+      0.1485,
+      0.0131,
+      0.009
+    ],
+    "k_round": 0.842,
+    "label_ru": "Не подходит для сортировки по габаритам"
+  },
+  "plate": {
+    "name": "plate",
+    "category": "round",
+    "zone": "D",
+    "obb_extents_m": [
+      0.2094,
+      0.2094,
+      0.0266
+    ],
+    "k_round": 0.998,
+    "label_ru": "Не подходит для сортировки без доупаковки"
+  },
+  "pouf": {
+    "name": "pouf",
+    "category": "oversize",
+    "zone": "C",
+    "obb_extents_m": [
+      0.4889,
+      0.4889,
+      0.264
+    ],
+    "k_round": 0.994,
+    "label_ru": "Не подходит для сортировки по габаритам"
+  }
+}

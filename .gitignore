@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+runs/            # чекпойнты и логи обучения RL
+*.mp4            # видео — в облачное хранилище, не в репозиторий
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
+.DS_Store

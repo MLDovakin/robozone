@@ -1,0 +1,73 @@
+<mujoco model="robozone_objects">
+  <asset>
+    <mesh name="bag" file="meshes/objects/bag.stl"/>
+    <mesh name="bottle" file="meshes/objects/bottle.stl"/>
+    <mesh name="box_300x200x200" file="meshes/objects/box_300x200x200.stl"/>
+    <mesh name="box_400x400x300" file="meshes/objects/box_400x400x300.stl"/>
+    <mesh name="cylinder" file="meshes/objects/cylinder.stl"/>
+    <mesh name="detergent" file="meshes/objects/detergent.stl"/>
+    <mesh name="helmet" file="meshes/objects/helmet.stl"/>
+    <mesh name="lunchbox" file="meshes/objects/lunchbox.stl"/>
+    <mesh name="pen" file="meshes/objects/pen.stl"/>
+    <mesh name="plate" file="meshes/objects/plate.stl"/>
+    <mesh name="pouf" file="meshes/objects/pouf.stl"/>
+  </asset>
+
+  <worldbody>
+    <body name="obj_bag" pos="-11.0 -2.50 0.36">
+      <freejoint name="obj_bag_joint"/>
+      <inertial pos="0.0000 0.0000 0.0997" mass="1.2" diaginertia="7.031994e-03 7.318079e-03 6.398859e-03"/>
+      <geom class="object" mesh="bag" rgba="0.55 0.45 0.35 1"/>
+    </body>
+    <body name="obj_bottle" pos="-11.0 -2.00 0.36">
+      <freejoint name="obj_bottle_joint"/>
+      <inertial pos="0.0000 0.0000 0.0457" mass="0.8" diaginertia="6.750154e-03 1.113861e-03 6.750154e-03"/>
+      <geom class="object" mesh="bottle" rgba="0.3 0.6 0.35 1"/>
+    </body>
+    <body name="obj_box_300x200x200" pos="-11.0 -1.50 0.36">
+      <freejoint name="obj_box_300x200x200_joint"/>
+      <inertial pos="0.0000 0.0000 0.1000" mass="2.0" diaginertia="1.336671e-02 2.176683e-02 2.180021e-02"/>
+      <geom class="object" mesh="box_300x200x200" rgba="0.72 0.55 0.35 1"/>
+    </body>
+    <body name="obj_box_400x400x300" pos="-11.0 -1.00 0.36">
+      <freejoint name="obj_box_400x400x300_joint"/>
+      <inertial pos="0.0000 0.0000 0.2000" mass="4.0" diaginertia="8.343342e-02 1.069337e-01 8.370042e-02"/>
+      <geom class="object" mesh="box_400x400x300" rgba="0.75 0.6 0.4 1"/>
+    </body>
+    <body name="obj_cylinder" pos="-11.0 -0.50 0.36">
+      <freejoint name="obj_cylinder_joint"/>
+      <inertial pos="0.0000 0.0000 0.0250" mass="1.5" diaginertia="5.436250e-04 2.395648e-02 2.387510e-02"/>
+      <geom class="object" mesh="cylinder" rgba="0.6 0.6 0.65 1"/>
+    </body>
+    <body name="obj_detergent" pos="-11.0 0.00 0.36">
+      <freejoint name="obj_detergent_joint"/>
+      <inertial pos="0.0004 0.0000 0.0893" mass="1.0" diaginertia="9.140871e-03 8.322695e-03 1.207820e-02"/>
+      <geom class="object" mesh="detergent" rgba="0.85 0.4 0.15 1"/>
+    </body>
+    <body name="obj_helmet" pos="-11.0 0.50 0.36">
+      <freejoint name="obj_helmet_joint"/>
+      <inertial pos="-0.0002 -0.0000 0.1781" mass="1.1" diaginertia="1.971575e-02 1.876778e-02 1.523231e-02"/>
+      <geom class="object" mesh="helmet" rgba="0.85 0.15 0.15 1"/>
+    </body>
+    <body name="obj_lunchbox" pos="-11.0 1.00 0.36">
+      <freejoint name="obj_lunchbox_joint"/>
+      <inertial pos="0.0000 0.0000 0.0762" mass="0.5" diaginertia="1.129466e-03 2.652757e-03 1.846732e-03"/>
+      <geom class="object" mesh="lunchbox" rgba="0.3 0.5 0.8 1"/>
+    </body>
+    <body name="obj_pen" pos="-11.0 1.50 0.36">
+      <freejoint name="obj_pen_joint"/>
+      <inertial pos="0.0000 0.0000 0.0742" mass="0.02" diaginertia="3.706195e-05 3.690811e-05 4.238383e-07"/>
+      <geom class="object" mesh="pen" rgba="0.2 0.2 0.7 1"/>
+    </body>
+    <body name="obj_plate" pos="-11.0 2.00 0.36">
+      <freejoint name="obj_plate_joint"/>
+      <inertial pos="0.0000 0.0000 0.1048" mass="0.4" diaginertia="1.487769e-03 2.924059e-03 1.483467e-03"/>
+      <geom class="object" mesh="plate" rgba="0.9 0.9 0.9 1"/>
+    </body>
+    <body name="obj_pouf" pos="-11.0 2.50 0.36">
+      <freejoint name="obj_pouf_joint"/>
+      <inertial pos="0.0000 0.0000 0.2445" mass="3.0" diaginertia="7.718046e-02 1.195129e-01 7.718046e-02"/>
+      <geom class="object" mesh="pouf" rgba="0.5 0.3 0.55 1"/>
+    </body>
+  </worldbody>
+</mujoco>
