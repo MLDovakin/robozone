@@ -115,7 +115,12 @@ pip install -r requirements-rl.txt                              # SB3 (+torch)
 python scripts/train_rl.py --algo sac --timesteps 300000 --n-envs 4
 python scripts/eval_rl.py --policy runs/sac/final.zip --algo sac # оценка + видео
 python scripts/scenario_drop_repick.py                          # сценарий срыва детали
+python scripts/record_regrasp.py --out demo_pick.mp4            # видео regrasp (POV манипулятора)
 ```
+
+> `demo_pick.mp4` — видео сценария **regrasp от лица манипулятора** (камера
+> следует за захватом): подвод → захват → срыв → recovery → повторный захват →
+> укладка, с онлайн-подписями фаз, флагов `контакт/захват/recovery` и `contact_conf`.
 
 
 ## 1. Что в этом репозитории
@@ -157,9 +162,12 @@ python scripts/build_objects_xml.py         # sim/objects.xml из STL
 python -m robozone.classification
 
 # 3) сквозная демонстрация контура (скриптовая политика) + видео
-python scripts/demo_pick.py --mode accumulator --video demo_pick.mp4
+python scripts/demo_pick.py --mode accumulator --video demo_route.mp4
 
-# 4) проверка RL-среды (без обучения)
+# 4) видео сценария regrasp от лица манипулятора (demo_pick.mp4)
+python scripts/record_regrasp.py --out demo_pick.mp4
+
+# 5) проверка RL-среды (без обучения)
 python scripts/eval_rl.py --policy random --episodes 12
 ```
 

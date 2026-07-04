@@ -1,0 +1,34 @@
+WARNING: Nan, Inf or huge value in QACC at DOF 59. The simulation is unstable. Time = 3.1160.
+
+WARNING: Nan, Inf or huge value in QACC at DOF 54. The simulation is unstable. Time = 7.4360.
+
+эп 50/300: успех эксперта 35/50 (70%), переходов 4575
+WARNING: Nan, Inf or huge value in QACC at DOF 57. The simulation is unstable. Time = 3.1860.
+
+WARNING: Nan, Inf or huge value in QACC at DOF 54. The simulation is unstable. Time = 6.7300.
+
+WARNING: Nan, Inf or huge value in QACC at DOF 57. The simulation is unstable. Time = 7.4580.
+
+эп 100/300: успех эксперта 72/100 (72%), переходов 9722
+WARNING: Nan, Inf or huge value in QACC at DOF 54. The simulation is unstable. Time = 3.0560.
+
+эп 150/300: успех эксперта 109/150 (73%), переходов 14717
+WARNING: Nan, Inf or huge value in QACC at DOF 57. The simulation is unstable. Time = 6.8040.
+
+эп 200/300: успех эксперта 146/200 (73%), переходов 20043
+WARNING: Nan, Inf or huge value in QACC at DOF 54. The simulation is unstable. Time = 2.7020.
+
+WARNING: Nan, Inf or huge value in QACC at DOF 54. The simulation is unstable. Time = 3.0900.
+
+эп 250/300: успех эксперта 182/250 (73%), переходов 24945
+WARNING: Nan, Inf or huge value in QACC at DOF 54. The simulation is unstable. Time = 6.8520.
+
+WARNING: Nan, Inf or huge value in QACC at DOF 54. The simulation is unstable. Time = 8.2260.
+
+эп 300/300: успех эксперта 222/300 (74%), переходов 30596
+
+сохранено: runs/demos.npz  (30596 переходов)
+успех эксперта: 222/300 (74%)
+  зона B: 45/75 (60%)
+  зона C: 46/74 (62%)
+  зона D: 131/151 (87%)

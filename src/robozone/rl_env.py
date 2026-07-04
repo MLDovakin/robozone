@@ -156,6 +156,7 @@ class SortingPickEnv(gym.Env if gym else object):
         self._prev_approach_pot = 0.0
         self._prev_place_pot = 0.0
         self._prev_realign_pot = 0.0
+        self._last_obs = np.zeros(self.observation_space.shape, np.float32)
 
     # ------------------------------------------------------------------ gym
     def _difficulty(self) -> tuple[str, int]:
@@ -243,7 +244,8 @@ class SortingPickEnv(gym.Env if gym else object):
         self._prev_approach_pot = -np.linalg.norm(self.sim.ee_pos() - self._grasp_pt)
         self._prev_place_pot = self._place_potential()
         self._episodes += 1
-        return self._obs(), self._info()
+        self._last_obs = self._obs()
+        return self._last_obs, self._info()
 
     def step(self, action):
         action = np.asarray(action, np.float32)
@@ -263,10 +265,22 @@ class SortingPickEnv(gym.Env if gym else object):
 
         self.sim.step(self._n_sub)
         self._steps += 1
+
+        # защита от физической нестабильности (редкий blow-up контактов) —
+        # завершаем эпизод, чтобы NaN не попал в политику/replay buffer
+        if not np.all(np.isfinite(self.sim.data.qpos)):
+            info = {"object": self._active, "target_zone": self._zone,
+                    "current_zone": None, "held": False,
+                    "contacted": self._contacted, "recovery": self._recovery_mode,
+                    "scenario": self._scenario, "unstable": True}
+            self._recent_success.append(0.0)
+            return self._last_obs, -10.0, True, False, info
+
         if not self.sim.is_held(self._active):
             self._grasp_pt = self.sim.object_top(self._active)
 
         obs = self._obs()
+        self._last_obs = obs
         reward, terminated = self._reward()
         truncated = self._steps >= self.max_steps
         if terminated or truncated:
@@ -337,9 +351,11 @@ class SortingPickEnv(gym.Env if gym else object):
                 if not self._recovery_mode:          # вход в closed-loop recovery
                     self._recovery_mode = True
                     self._prev_realign_pot = -np.linalg.norm(ee - self._grasp_pt)
-            # вход в recovery и при «мягкой» потере контакта (уверенность просела)
-            if self._contacted and not held and self._contact_conf < 0.3 \
-                    and not self._recovery_mode:
+            # вход в recovery при «мягкой» потере контакта (уверенность просела),
+            # НО только пока вакуум ещё включён — намеренный сброс (укладка) не
+            # считается срывом и не запускает recovery
+            if self._contacted and not held and self._suction_cmd > 0.5 \
+                    and self._contact_conf < 0.3 and not self._recovery_mode:
                 self._recovery_mode = True
                 self._prev_realign_pot = -np.linalg.norm(ee - self._grasp_pt)
 
@@ -362,8 +378,10 @@ class SortingPickEnv(gym.Env if gym else object):
         self._was_held = held
 
         terminated = False
-        if zone == self._zone and not held and \
-                np.linalg.norm(s.object_vel(self._active)) < 0.1:
+        # B — питающий конвейер (товар едет к инфиду): покой не требуется;
+        # C/D — ролл-кейджи: товар должен осесть внутри
+        resting = np.linalg.norm(s.object_vel(self._active)) < 0.1
+        if zone == self._zone and not held and (zone == "B" or resting):
             r += 10.0
             terminated = True
         elif zone is not None and zone != self._zone and not held:
